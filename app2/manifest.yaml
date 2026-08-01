@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app2
+  labels:
+    project: roboshop
+    environment: dev
+    component: app2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: roboshop
+      environment: dev
+      component: app2
+  template:
+    metadata:
+      labels:
+        project: roboshop
+        environment: dev
+        component: app2
+    spec:
+      containers:
+      - name: app2
+        image: jayashankar1994/app2:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app2
+spec:
+  selector:
+    project: roboshop
+    environment: dev
+    component: app2
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app2-ingress
+  annotations:
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:419142569809:certificate/16448e75-3070-48f3-90ec-69b8d32accb3
+    alb.ingress.kubernetes.io/tags: Environment=dev,Project=roboshop
+spec:
+  ingressClassName: alb
+  rules:
+  - host: "app2.jai01.online"
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: app2
+            port:
+              number: 80
