@@ -48,7 +48,7 @@ kind: Ingress
 metadata:
   name: app1-ingress
   annotations:
-    alb.ingress.kubernetes.io/listen-ports: '{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:419142569809:certificate/16448e75-3070-48f3-90ec-69b8d32accb3
@@ -59,7 +59,7 @@ spec:
   - host: "app1.jai01.online"
     http:
       paths:
-      - path: /app1
+      - path: "/"
         pathType: Prefix
         backend:
           service:
